@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-LLM Council - Benchmark Script
+Multi-Model Orchestration - Benchmark Script
 
-Tests council performance with various questions and voting methods.
+Tests orchestration performance with various questions and voting methods.
 """
 
 import asyncio
@@ -60,7 +60,7 @@ class CouncilBenchmark:
     async def run(self):
         """Run the full benchmark suite."""
         print("\n" + "="*60)
-        print("🏛️  LLM COUNCIL BENCHMARK")
+        print("🎭 MULTI-MODEL ORCHESTRATION BENCHMARK")
         print("="*60 + "\n")
         
         # Initialize council

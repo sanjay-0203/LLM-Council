@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LLM Council - Results Export Script
+Multi-Model Orchestration - Results Export Script
 
 Export session results to various formats (JSON, CSV, Markdown).
 """
@@ -107,7 +107,7 @@ class ResultsExporter:
         output_file.parent.mkdir(parents=True, exist_ok=True)
         
         with open(output_file, 'w', encoding='utf-8') as f:
-            f.write("# LLM Council - Session History\n\n")
+            f.write("# Multi-Model Orchestration - Session History\n\n")
             f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
             f.write(f"Total Sessions: {len(sessions)}\n\n")
             f.write("---\n\n")
@@ -189,7 +189,7 @@ async def main():
     args = parser.parse_args()
     
     print("\n" + "="*60)
-    print("📤 LLM Council - Results Export")
+    print("📤 Multi-Model Orchestration - Results Export")
     print("="*60 + "\n")
     
     exporter = ResultsExporter()

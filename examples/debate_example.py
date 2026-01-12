@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LLM Council - Debate Example
+Multi-Model Orchestration - Debate Example
 
 Shows how to conduct a structured debate between models.
 """
@@ -23,7 +23,7 @@ async def main():
     # Debate topic
     topic = "Should AI development be regulated by governments?"
     
-    print("🏛️  LLM Council - Debate Mode")
+    print("🎭 Multi-Model Orchestration - Debate Mode")
     print("="*60)
     print(f"Topic: {topic}")
     print("="*60 + "\n")

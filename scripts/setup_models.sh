@@ -1,8 +1,8 @@
 #!/bin/bash
-# LLM Council - Model Setup Script
-# Pulls recommended models for the council
+# Multi-Model Orchestration - Model Setup Script
+# Pulls recommended models for the orchestration
 
-echo "🏛️  LLM Council - Model Setup"
+echo "🎭 Multi-Model Orchestration - Model Setup"
 echo "=============================="
 echo ""
 

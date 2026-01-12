@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-LLM Council - Basic Usage Example
+Multi-Model Orchestration - Basic Usage Example
 
-Simple example showing how to use the council programmatically.
+Simple example showing how to use the orchestration programmatically.
 """
 
 import asyncio
@@ -21,7 +21,7 @@ async def main():
     council = LLMCouncil(config)
     await council.initialize()
     
-    print("🏛️  LLM Council initialized!")
+    print("🎭 Multi-Model Orchestration initialized!")
     print(f"Active members: {len(council.model_manager.get_active_members())}\n")
     
     # Ask a simple question

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LLM Council - CLI Interface
+Multi-Model Orchestration - CLI Interface
 """
 
 import asyncio
@@ -32,7 +32,7 @@ async def main():
         config = yaml.safe_load(f)
     
     # Initialize council
-    logger.info("Initializing LLM Council...")
+    logger.info("Initializing Multi-Model Orchestration...")
     council = LLMCouncil(config)
     
     try:
@@ -43,15 +43,15 @@ async def main():
         return
     
     print("\n" + "="*60)
-    print("🏛️  LLM COUNCIL - Multi-Model AI Consensus System")
+    print("🎭 MULTI-MODEL ORCHESTRATION - AI Consensus System")
     print("="*60)
     print(f"\nActive Members: {len(council.model_manager.get_active_members())}")
     for member in council.model_manager.get_active_members():
         print(f"  • {member.name} ({member.role})")
     
     print("\nCommands:")
-    print("  - Type your question to ask the council")
-    print("  - 'stats' - Show council statistics")
+    print("  - Type your question to ask the orchestration")
+    print("  - 'stats' - Show orchestration statistics")
     print("  - 'quit' or 'exit' - Exit the program")
     print("\n" + "="*60 + "\n")
     
@@ -68,7 +68,7 @@ async def main():
             
             if question.lower() == "stats":
                 stats = council.model_manager.get_all_stats()
-                print("\n📊 Council Statistics:")
+                print("\n📊 Orchestration Statistics:")
                 print(f"  Total Members: {stats['total_members']}")
                 print(f"  Active Members: {stats['active_members']}")
                 print(f"  Backends: {', '.join(stats['backends'])}")
@@ -82,7 +82,7 @@ async def main():
                 continue
             
             # Ask the council
-            print("\n💭 Consulting the council...")
+            print("\n💭 Orchestrating models...")
             
             result = await council.ask(
                 question,
@@ -92,7 +92,7 @@ async def main():
             )
             
             print(f"\n{'='*60}")
-            print("📜 COUNCIL ANSWER")
+            print("📜 ORCHESTRATION ANSWER")
             print(f"{'='*60}\n")
             print(result.answer)
             

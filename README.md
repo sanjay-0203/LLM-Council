@@ -1,12 +1,12 @@
-# 🏛️ LLM Council
+# 🎭 Multi-Model Orchestration
 
 **Open-Source Multi-Model AI Consensus System**
 
-LLM Council is a production-ready Python framework that orchestrates multiple local LLMs to work together, providing more reliable and well-rounded AI responses through voting, evaluation, and consensus building.
+Multi-Model Orchestration is a production-ready Python framework that orchestrates multiple local LLMs to work together, providing more reliable and well-rounded AI responses through voting, evaluation, and consensus building.
 
 ## ✨ Features
 
-- **🗳️Multiple Voting Methods**: Majority, weighted, ranked-choice, Borda count, approval, and Condorcet
+- **🗳️ Multiple Voting Methods**: Majority, weighted, ranked-choice, Borda count, approval, and Condorcet
 - **📊 Response Evaluation**: Multi-criteria scoring with aggregated feedback
 - **🤝 Consensus Building**: Synthesize insights from multiple models
 - 💬 **Debate Mode**: Structured multi-round discussions
@@ -37,8 +37,8 @@ ollama pull gemma2:9b
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/llm-council.git
-cd llm-council
+git clone https://github.com/sanjay-0203/Multi-Model-Orchestration.git
+cd Multi-Model-Orchestration
 
 # Install dependencies
 pip install -r requirements.txt
@@ -140,7 +140,7 @@ result = await council.ask(
 
 ```
 ┌─────────────────────────────────────┐
-│         LLM Council                 │
+│    Multi-Model Orchestration        │
 │  ┌──────────────────────────────┐  │
 │  │   Model Manager              │  │
 │  │  • Ollama Backend            │  │
@@ -249,14 +249,14 @@ Contributions welcome! Please:
 
 ## 📚 Citation
 
-If you use LLM Council in your research, please cite:
+If you use Multi-Model Orchestration in your research, please cite:
 
 ```bibtex
-@software{llm_council,
-  title = {LLM Council: Multi-Model AI Consensus System},
-  author = {Your Name},
+@software{multi_model_orchestration,
+  title = {Multi-Model Orchestration: AI Consensus System},
+  author = {Sanjay},
   year = {2024},
-  url = {https://github.com/yourusername/llm-council}
+  url = {https://github.com/sanjay-0203/Multi-Model-Orchestration}
 }
 ```
 

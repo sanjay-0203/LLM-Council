@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LLM Council - Setup Script
+Multi-Model Orchestration - Setup Script
 """
 
 from setuptools import setup, find_packages
@@ -12,14 +12,14 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
     requirements = [line.strip() for line in fh if line.strip() and not line.startswith("#")]
 
 setup(
-    name="llm-council",
+    name="multi-model-orchestration",
     version="1.0.0",
-    author="Your Name",
-    author_email="your.email@example.com",
-    description="Open-source multi-model LLM consensus system",
+    author="Sanjay",
+    author_email="",
+    description="Multi-Model AI Consensus and Orchestration System",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/llm-council",
+    url="https://github.com/sanjay-0203/Multi-Model-Orchestration",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -42,7 +42,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "llm-council=main:app",
+            "mmo=main:app",
         ],
     },
 )
