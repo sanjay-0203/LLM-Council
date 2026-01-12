@@ -1,13 +1,10 @@
 """
 LLM Council - The main orchestrator
 """
-
 import asyncio
 import uuid
 from typing import List, Dict, Any, Optional
-
 from loguru import logger
-
 from .models import ModelManager, CouncilMember
 from .voting import VotingSystem, VotingResult, VotingMethod
 from .evaluator import ResponseEvaluator, AggregatedEvaluation
@@ -16,41 +13,30 @@ from .calibration import ConfidenceCalibrator
 from .persistence import CouncilDatabase
 from .streaming import StreamingHandler
 from .utils import create_session_id
-
-
 class CouncilResponse:
     """Response from the council."""
-    
     def __init__(self, data: Dict[str, Any]):
         self.data = data
-    
     @property
     def answer(self) -> str:
         """Get the final answer."""
         return self.data.get("final_answer", "")
-    
     @property
     def session_id(self) -> str:
         return self.data.get("session_id", "")
-    
     @property
     def responses(self) -> List[Dict[str, Any]]:
         return self.data.get("responses", [])
-    
     @property
     def confidence(self) -> float:
         consensus = self.data.get("consensus", {})
         if isinstance(consensus, dict):
             return consensus.get("confidence", 0.5)
         return 0.5
-    
     def to_dict(self) -> Dict[str, Any]:
         return self.data
-
-
 class LLMCouncil:
     """The main council orchestrator."""
-    
     def __init__(
         self,
         config: Dict[str, Any],
@@ -60,15 +46,11 @@ class LLMCouncil:
         self.config = config
         self.model_manager = model_manager or ModelManager()
         self.database = database or CouncilDatabase()
-        
-        # Get voting method from config
         voting_method_str = config.get("council", {}).get("voting_method", "weighted")
         try:
             voting_method = VotingMethod(voting_method_str)
         except ValueError:
             voting_method = VotingMethod.WEIGHTED
-        
-        # Components
         self.voting = VotingSystem(
             default_method=voting_method,
             min_agreement_threshold=config.get("council", {}).get("min_agreement_threshold", 0.6)
@@ -81,22 +63,16 @@ class LLMCouncil:
             max_rounds=config.get("council", {}).get("max_debate_rounds", 5),
             enable_devil_advocate=config.get("council", {}).get("enable_devil_advocate", True)
         )
-        
         self.session_id = str(uuid.uuid4())
-    
     async def initialize(self):
         """Initialize all components."""
         await self.model_manager.initialize()
         await self.database.initialize()
-        
-        # Load models from config
         for model_cfg in self.config.get("models", []):
             if model_cfg.get("enabled", False):
                 await self.model_manager.add_member(**model_cfg)
-        
         active_count = len(self.model_manager.get_active_members())
         logger.info(f"LLM Council initialized with {active_count} active members")
-    
     async def ask(
         self,
         question: str,
@@ -109,8 +85,6 @@ class LLMCouncil:
         """Main entry point: ask the council a question."""
         session_id = create_session_id(question)
         self.session_id = session_id
-        
-        # Select members
         if members:
             selected_members = [
                 m for m in self.model_manager.members.values()
@@ -118,18 +92,11 @@ class LLMCouncil:
             ]
         else:
             selected_members = self.model_manager.get_active_members()
-        
         if not selected_members:
             raise ValueError("No active council members")
-        
         logger.info(f"Council session {session_id}: {len(selected_members)} members responding")
-        
-        # Generate responses
         responses = await self.model_manager.parallel_generate(question)
-        
-        # Filter successful
         successful_responses = [r for r in responses if r["success"]]
-        
         if not successful_responses:
             return CouncilResponse({
                 "session_id": session_id,
@@ -140,8 +107,6 @@ class LLMCouncil:
                 "council_size": len(selected_members),
                 "error": "All council members failed to respond"
             })
-        
-        # Evaluation
         evaluation = None
         if use_evaluation and len(successful_responses) > 1:
             combined_response = "\n\n".join([r["content"] for r in successful_responses])
@@ -150,8 +115,6 @@ class LLMCouncil:
                 combined_response,
                 selected_members
             )
-        
-        # Voting
         winner_response = None
         voting_result = None
         if use_voting and len(successful_responses) > 1:
@@ -163,16 +126,12 @@ class LLMCouncil:
             )
             if voting_result.winner <= len(candidates):
                 winner_response = candidates[voting_result.winner - 1]
-        
-        # Consensus
         final_answer = winner_response
         consensus_result = None
         if use_consensus and len(successful_responses) > 1:
             synthesizers = self.model_manager.get_members_by_role("synthesizer")
             if not synthesizers:
-                # Use first available member as synthesizer
                 synthesizers = selected_members[:1]
-            
             if synthesizers:
                 consensus_result = await self.consensus_builder.build_consensus(
                     question,
@@ -180,12 +139,8 @@ class LLMCouncil:
                     synthesizers[0]
                 )
                 final_answer = consensus_result.consensus
-        
-        # Fallback
         if not final_answer and successful_responses:
             final_answer = successful_responses[0]["content"]
-        
-        # Save session
         await self.database.save_session(
             session_id=session_id,
             question=question,
@@ -194,7 +149,6 @@ class LLMCouncil:
             consensus=consensus_result.to_dict() if consensus_result else None,
             evaluation=evaluation.to_dict() if evaluation else None
         )
-        
         result_data = {
             "session_id": session_id,
             "question": question,
@@ -206,9 +160,7 @@ class LLMCouncil:
             "num_responses": len(successful_responses),
             "council_size": len(selected_members)
         }
-        
         return CouncilResponse(result_data)
-    
     async def debate(
         self,
         topic: str,
@@ -220,10 +172,8 @@ class LLMCouncil:
             for name in (participants or [])
             if self.model_manager.get_member(name)
         ] or self.model_manager.get_active_members()[:6]
-        
         result = await self.debate_manager.conduct_debate(topic, members)
         return result
-    
     async def evaluate_response(
         self,
         question: str,
@@ -238,9 +188,7 @@ class LLMCouncil:
             ]
         else:
             eval_members = self.model_manager.get_active_members()[:5]
-        
         return await self.evaluator.evaluate(question, response, eval_members)
-    
     async def shutdown(self):
         """Shutdown the council."""
         await self.model_manager.shutdown()

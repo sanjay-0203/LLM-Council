@@ -1,24 +1,19 @@
 """
 Database persistence for LLM Council.
 """
-
 import json
 import asyncio
 from datetime import datetime
 from dataclasses import dataclass, asdict
 from typing import Dict, List, Any, Optional
 from pathlib import Path
-
 from loguru import logger
-
 try:
     import aiosqlite
     HAS_AIOSQLITE = True
 except ImportError:
     HAS_AIOSQLITE = False
     logger.warning("aiosqlite not installed. Persistence features limited.")
-
-
 @dataclass
 class SessionRecord:
     """A record of a council session."""
@@ -26,12 +21,11 @@ class SessionRecord:
     session_id: str = ""
     timestamp: str = ""
     question: str = ""
-    responses: str = ""  # JSON string
-    votes: str = ""  # JSON string
+    responses: str = ""  
+    votes: str = ""  
     consensus: str = ""
-    evaluation: str = ""  # JSON string
-    metadata: str = ""  # JSON string
-    
+    evaluation: str = ""  
+    metadata: str = ""  
     def to_dict(self) -> Dict[str, Any]:
         return {
             "id": self.id,
@@ -44,18 +38,14 @@ class SessionRecord:
             "evaluation": json.loads(self.evaluation) if self.evaluation else {},
             "metadata": json.loads(self.metadata) if self.metadata else {}
         }
-
-
 class CouncilDatabase:
     """
     SQLite-based persistence for council sessions.
     """
-    
     def __init__(self, db_path: str = "data/council.db"):
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._initialized = False
-    
     async def initialize(self):
         """Initialize database tables."""
         if not HAS_AIOSQLITE:
@@ -63,7 +53,6 @@ class CouncilDatabase:
             self._memory_store: List[SessionRecord] = []
             self._initialized = True
             return
-        
         async with aiosqlite.connect(self.db_path) as db:
             await db.execute("""
                 CREATE TABLE IF NOT EXISTS sessions (
@@ -78,7 +67,6 @@ class CouncilDatabase:
                     metadata TEXT
                 )
             """)
-            
             await db.execute("""
                 CREATE TABLE IF NOT EXISTS model_stats (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -90,7 +78,6 @@ class CouncilDatabase:
                     avg_tokens REAL
                 )
             """)
-            
             await db.execute("""
                 CREATE TABLE IF NOT EXISTS calibration_samples (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -101,20 +88,15 @@ class CouncilDatabase:
                     category TEXT
                 )
             """)
-            
             await db.execute("""
                 CREATE INDEX IF NOT EXISTS idx_session_id ON sessions(session_id)
             """)
-            
             await db.execute("""
                 CREATE INDEX IF NOT EXISTS idx_timestamp ON sessions(timestamp)
             """)
-            
             await db.commit()
-        
         self._initialized = True
         logger.info(f"Database initialized at {self.db_path}")
-    
     async def save_session(
         self,
         session_id: str,
@@ -128,7 +110,6 @@ class CouncilDatabase:
         """Save a council session."""
         if not self._initialized:
             await self.initialize()
-        
         record = SessionRecord(
             session_id=session_id,
             timestamp=datetime.utcnow().isoformat(),
@@ -139,11 +120,9 @@ class CouncilDatabase:
             evaluation=json.dumps(evaluation or {}),
             metadata=json.dumps(metadata or {})
         )
-        
         if not HAS_AIOSQLITE:
             self._memory_store.append(record)
             return True
-        
         try:
             async with aiosqlite.connect(self.db_path) as db:
                 await db.execute("""
@@ -161,24 +140,19 @@ class CouncilDatabase:
                     record.metadata
                 ))
                 await db.commit()
-            
             return True
-            
         except Exception as e:
             logger.error(f"Failed to save session: {e}")
             return False
-    
     async def get_session(self, session_id: str) -> Optional[SessionRecord]:
         """Get a session by ID."""
         if not self._initialized:
             await self.initialize()
-        
         if not HAS_AIOSQLITE:
             for record in self._memory_store:
                 if record.session_id == session_id:
                     return record
             return None
-        
         try:
             async with aiosqlite.connect(self.db_path) as db:
                 db.row_factory = aiosqlite.Row
@@ -189,12 +163,9 @@ class CouncilDatabase:
                     row = await cursor.fetchone()
                     if row:
                         return SessionRecord(**dict(row))
-        
         except Exception as e:
             logger.error(f"Failed to get session: {e}")
-        
         return None
-    
     async def get_recent_sessions(
         self,
         limit: int = 10,
@@ -203,10 +174,8 @@ class CouncilDatabase:
         """Get recent sessions."""
         if not self._initialized:
             await self.initialize()
-        
         if not HAS_AIOSQLITE:
             return self._memory_store[-limit-offset:-offset] if offset else self._memory_store[-limit:]
-        
         try:
             async with aiosqlite.connect(self.db_path) as db:
                 db.row_factory = aiosqlite.Row
@@ -216,11 +185,9 @@ class CouncilDatabase:
                 ) as cursor:
                     rows = await cursor.fetchall()
                     return [SessionRecord(**dict(row)) for row in rows]
-        
         except Exception as e:
             logger.error(f"Failed to get recent sessions: {e}")
             return []
-    
     async def search_sessions(
         self,
         query: str,
@@ -229,13 +196,11 @@ class CouncilDatabase:
         """Search sessions by question content."""
         if not self._initialized:
             await self.initialize()
-        
         if not HAS_AIOSQLITE:
             return [
                 r for r in self._memory_store
                 if query.lower() in r.question.lower()
             ][:limit]
-        
         try:
             async with aiosqlite.connect(self.db_path) as db:
                 db.row_factory = aiosqlite.Row
@@ -245,11 +210,9 @@ class CouncilDatabase:
                 ) as cursor:
                     rows = await cursor.fetchall()
                     return [SessionRecord(**dict(row)) for row in rows]
-        
         except Exception as e:
             logger.error(f"Failed to search sessions: {e}")
             return []
-    
     async def save_calibration_sample(
         self,
         model_name: str,
@@ -260,7 +223,6 @@ class CouncilDatabase:
         """Save a calibration sample."""
         if not HAS_AIOSQLITE:
             return
-        
         try:
             async with aiosqlite.connect(self.db_path) as db:
                 await db.execute("""
@@ -275,10 +237,8 @@ class CouncilDatabase:
                     category
                 ))
                 await db.commit()
-        
         except Exception as e:
             logger.error(f"Failed to save calibration sample: {e}")
-    
     async def get_calibration_samples(
         self,
         model_name: str,
@@ -287,7 +247,6 @@ class CouncilDatabase:
         """Get calibration samples for a model."""
         if not HAS_AIOSQLITE:
             return []
-        
         try:
             async with aiosqlite.connect(self.db_path) as db:
                 db.row_factory = aiosqlite.Row
@@ -300,11 +259,9 @@ class CouncilDatabase:
                 ) as cursor:
                     rows = await cursor.fetchall()
                     return [dict(row) for row in rows]
-        
         except Exception as e:
             logger.error(f"Failed to get calibration samples: {e}")
             return []
-    
     async def get_statistics(self) -> Dict[str, Any]:
         """Get database statistics."""
         if not HAS_AIOSQLITE:
@@ -312,14 +269,10 @@ class CouncilDatabase:
                 "total_sessions": len(getattr(self, '_memory_store', [])),
                 "storage": "memory"
             }
-        
         try:
             async with aiosqlite.connect(self.db_path) as db:
-                # Total sessions
                 async with db.execute("SELECT COUNT(*) FROM sessions") as cursor:
                     total_sessions = (await cursor.fetchone())[0]
-                
-                # Sessions per day (last 7 days)
                 async with db.execute("""
                     SELECT DATE(timestamp) as date, COUNT(*) as count
                     FROM sessions
@@ -328,13 +281,10 @@ class CouncilDatabase:
                     ORDER BY date
                 """) as cursor:
                     daily_counts = {row[0]: row[1] for row in await cursor.fetchall()}
-                
-                # Model usage
                 async with db.execute("""
                     SELECT COUNT(*) FROM calibration_samples
                 """) as cursor:
                     total_samples = (await cursor.fetchone())[0]
-                
                 return {
                     "total_sessions": total_sessions,
                     "daily_sessions": daily_counts,
@@ -342,31 +292,24 @@ class CouncilDatabase:
                     "storage": "sqlite",
                     "db_path": str(self.db_path)
                 }
-        
         except Exception as e:
             logger.error(f"Failed to get statistics: {e}")
             return {"error": str(e)}
-    
     async def cleanup_old_records(self, days: int = 90):
         """Remove records older than specified days."""
         if not HAS_AIOSQLITE:
             return
-        
         try:
             async with aiosqlite.connect(self.db_path) as db:
                 await db.execute(
                     "DELETE FROM sessions WHERE timestamp < datetime('now', ?)",
                     (f'-{days} days',)
                 )
-                
                 await db.execute(
                     "DELETE FROM calibration_samples WHERE timestamp < datetime('now', ?)",
                     (f'-{days} days',)
                 )
-                
                 await db.commit()
-            
             logger.info(f"Cleaned up records older than {days} days")
-        
         except Exception as e:
             logger.error(f"Failed to cleanup old records: {e}")
