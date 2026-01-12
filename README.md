@@ -1,21 +1,21 @@
-# 🎭 Multi-Model Orchestration
+# Multi-Model Orchestration
 
 **Open-Source Multi-Model AI Consensus System**
 
 Multi-Model Orchestration is a production-ready Python framework that orchestrates multiple local LLMs to work together, providing more reliable and well-rounded AI responses through voting, evaluation, and consensus building.
 
-## ✨ Features
+## Features
 
-- **🗳️ Multiple Voting Methods**: Majority, weighted, ranked-choice, Borda count, approval, and Condorcet
-- **📊 Response Evaluation**: Multi-criteria scoring with aggregated feedback
-- **🤝 Consensus Building**: Synthesize insights from multiple models
-- 💬 **Debate Mode**: Structured multi-round discussions
-- **🎯 Confidence Calibration**: Adaptive confidence scoring based on historical accuracy
-- **💾 Persistence**: SQLite-based session storage
-- **⚡ Streaming Support**: Real-time response streaming
-- **🔌 Multiple Backends**: Ollama (primary), vLLM, llama.cpp
+- **Multiple Voting Methods**: Majority, weighted, ranked-choice, Borda count, approval, and Condorcet
+- **Response Evaluation**: Multi-criteria scoring with aggregated feedback
+- **Consensus Building**: Synthesize insights from multiple models
+- **Debate Mode**: Structured multi-round discussions
+- **Confidence Calibration**: Adaptive confidence scoring based on historical accuracy
+- **Persistence**: SQLite-based session storage
+- **Streaming Support**: Real-time response streaming
+- **Multiple Backends**: Ollama (primary), vLLM, llama.cpp
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -76,7 +76,7 @@ python main.py
 # streamlit run streamlit_app.py
 ```
 
-## 📖 Usage Examples
+## Usage Examples
 
 ### Basic Question
 
@@ -136,7 +136,7 @@ result = await council.ask(
 )
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────┐
@@ -174,7 +174,7 @@ result = await council.ask(
 └─────────────────────────────────────┘
 ```
 
-## 🎯 Model Roles
+## Model Roles
 
 The council supports specialized roles for different models:
 
@@ -188,7 +188,7 @@ The council supports specialized roles for different models:
 - **Fact Checker**: Verifies claims
 - **Ethical Reviewer**: Considers ethical implications
 
-## 🛠️ Configuration
+## Configuration
 
 See `config.yaml` for full configuration options:
 
@@ -199,7 +199,7 @@ See `config.yaml` for full configuration options:
 - Persistence and caching
 - Logging
 
-## 📊 Voting Methods
+## Voting Methods
 
 1. **Majority**: Simple majority wins
 2. **Weighted**: Member weight × confidence
@@ -209,7 +209,7 @@ See `config.yaml` for full configuration options:
 6. **Approval**: Multiple approvals
 7. **Condorcet**: Pairwise comparisons
 
-## 🔧 Development
+## Development
 
 ```bash
 # Install development dependencies
@@ -227,11 +227,11 @@ isort council/
 mypy council/
 ```
 
-## 📝 License
+## License
 
 MIT License - see LICENSE file
 
-## 🤝 Contributing
+## Contributing
 
 Contributions welcome! Please:
 
@@ -241,13 +241,13 @@ Contributions welcome! Please:
 4. Add tests
 5. Submit a pull request
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with [Ollama](https://ollama.ai)
 - Inspired by ensemble methods in ML
 - Thanks to the open-source LLM community
 
-## 📚 Citation
+## Citation
 
 If you use Multi-Model Orchestration in your research, please cite:
 
@@ -262,4 +262,4 @@ If you use Multi-Model Orchestration in your research, please cite:
 
 ---
 
-**Made with ❤️ for the open-source AI community**
+**Made for the open-source AI community**
